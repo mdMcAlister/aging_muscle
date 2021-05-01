@@ -2,10 +2,9 @@
 A bioinformatic workflow for finding differentially expressed genes between old and young tissue samples.
 
 ## Prerequisites
-* SRA Toolkit
 * Nextflow
 * GEMmaker
-* GEMprep
+* GEMprep?
 * Singularity
 
 ## Preliminary Steps
@@ -34,44 +33,18 @@ AAGTAGGTCTCGTCTGTGTTTTCTACGAGCTTGTGTTCCAGCTGACCCACTCCCTGGGTGGGGGGACTGGGT
 **Step 7.** In the middle of page, you'll see a section titled "Select". In the row titled "Total" click the Metadata button underneath the "Download" column. This will download a CSV to your local computer.  
 **Step 8.** Open a blank spreadsheet in Excel. Navigate to the "Data" tab, then click "From Text/CSV". This will import the list of experiments.  
 **Step 9.** Sort the AGE column from smallest to largest to get a sense of the range.  
-**Step 10.** Using Excel's built-in =AVERAGE() and =MEDIAN() commands, determine the average and median ages.  
+**Step 10.** Determine the average age using Excel's built-in =AVERAGE() command.  
 **Step 11.** Select six samples to carry forward for further analysis: two near the youngest age, two near the mean or median age, and two near the oldest age. For each pair, select one male and one female.  
 **Step 12.** Copy the SRR numbers for these six samples.  
-**Step 13.** In a working directory, create a simple script file: nano SRA_download.sh  
-**Step 14.** Paste the SRR numbers into this file and append each line with the word prefix. Your file should resemble this:  
-```
-prefetch SRR13388755
-prefetch SRR13388756
-prefetch SRR13388742
-prefetch SRR13388743
-prefetch SRR13388751
-prefetch SRR13388752
-```
-**Step 15**. Use the nohup command to download a set of SRA files without having to manually enter each one: nohup bash SRA_download.sh  
-Note that, given the size of these files, this step may take an hour or longer.
-If you would like to see progress in real time, open a second terminal, navigate to your working directory and use the command "tail -f nohup.out"  
-**Step 16.** Move the downloaded .sra files to your working directory.  
-**Step 17.** Convert SRA format to FASTQ format.  
-Create a simple script file: nano SRA_to_FASTQ.sh
-```
-fastq-dump SRR13388755.sra --split-files
-fastq-dump SRR13388756.sra --split-files
-fastq-dump SRR13388742.sra --split-files
-fastq-dump SRR13388743.sra --split-files
-fastq-dump SRR13388751.sra --split-files
-fastq-dump SRR13388752.sra --split-files
-```
-**Step 17.** Use the nohup command again to convert your SRA files without having to manually enter each one: nohup bash SRA_to_FASTQ.sh
 
-## Prepare to Create a Gene Expression Matrix (GEM)
+## Configure GEMmaker and Create a Gene Expression Matrix (GEM)
 **Step 1.** Clone GEMmaker inside your working directory.  
 ```
 git clone https://github.com/SystemsGenetics/GEMmaker.git --branch develop
 ```
 **Step 2.** Index the human genome (or move the references file over from a previous deployment of GEMmaker).  
 **Step 3.** Update SRA_IDS.txt  
-**Step 4.** Move your .fastq files to the GEMmaker/input directory  
-**Step 5.** Edit the nextflow.config file that is in the main GEMmaker to configure the GEMmaker run properly. This is the configuration file that has all the parameters for GEMmaker to run, so we need to replace all the example file names with our real data file names. Here are the steps to reconfigure the nextflow.config file:
+**Step 4.** Edit the nextflow.config file that is in the main GEMmaker to configure the GEMmaker run properly. This is the configuration file that has all the parameters for GEMmaker to run, so we need to replace all the example file names with our real data file names. Here are the steps to reconfigure the nextflow.config file:
 1. Scroll down to the section that says project and change the name, machine_name, and description. You can edit these to whatever you want as the project name and project description, which are human-readable. Note that machine_name can only include letters, numbers, and underscores because it is the machine-readable project name.
 1. Scroll down to the section that says input. Change reference_name from “CORG” to “HG38”. This name must be the same as the prefix for all the index files in the references directory (the ones ending in .ht2).
 1. Change local_sample_files from “*_{1,2}.fastq” to “none”.  We are only using the samples with the SRA IDs from above – we don’t have any local sample files which would have been detected using the above regular expression.
@@ -81,7 +54,7 @@ git clone https://github.com/SystemsGenetics/GEMmaker.git --branch develop
 1. Scroll down to the section that says kallisto. Set “enable = false”. We are using hisat2 as our alignment tool. Kallisto is a different option for the same function.
 1. Save your changes and cat the file to make sure the changes are correct.
  
-**Step 6.** Run GEMmaker. Navigate to your GEMmaker working directory. Run GEMmaker with the human indexed genome, new RNAseq experiment list, and reconfigured nextflow.config file.
+**Step 5.** Navigate to your GEMmaker working directory. Run GEMmaker with the human indexed genome, new RNAseq experiment list, and reconfigured nextflow.config file.
 ```
 nextflow run main.nf -profile standard -with-singularity -with-report -with-timeline
 ```
