@@ -7,22 +7,6 @@ A bioinformatic workflow for finding differentially expressed genes between old 
 * GEMprep?
 * Singularity
 
-## Preliminary Steps
-Confirm that the **SRA Toolkit** is installed and properly configured.  
-**Step 1.** Type this command: `fastq-dump --stdout -X 2 SRR390728`  
-**Step 2.** You should see this exact output and nothing else:  
-```
-Read 2 spots for SRR390728
-Written 2 spots for SRR390728
-@SRR390728.1 1 length=72
-CATTCTTCACGTAGTTCTCGAGCCTTGGTTTTCAGCGATGGAGAATGACTTTGACAAGCTGAGAGAAGNTNC
-+SRR390728.1 1 length=72
-;;;;;;;;;;;;;;;;;;;;;;;;;;;9;;665142;;;;;;;;;;;;;;;;;;;;;;;;;;;;;96&&&&(
-@SRR390728.2 2 length=72
-AAGTAGGTCTCGTCTGTGTTTTCTACGAGCTTGTGTTCCAGCTGACCCACTCCCTGGGTGGGGGGACTGGGT
-+SRR390728.2 2 length=72
-;;;;;;;;;;;;;;;;;4;;;;3;393.1+4&&5&&;;;;;;;;;;;;;;;;;;;;;<9;<;;;;;464262
-```
 ## Find Experiment Files
 **Step 1.** Search NCBI Bioproject for "aging AND muscle"  
 **Step 2.** Under "Project Data" select *SRA* and under "Organism Groups" select *Human*  
