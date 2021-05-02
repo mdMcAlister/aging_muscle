@@ -18,7 +18,8 @@ A bioinformatic workflow for finding differentially expressed genes between old 
 ![image](https://user-images.githubusercontent.com/71157380/116802825-31d15580-aae4-11eb-90a1-7e8a35f4bcc5.png)  
 **Step 8.** Upload "SraRunTable.txt" to your Linux system.  
 **Step 9.** Determine the average age using this command: `awk -F ',' '{ total += $2; count++ } END { print total/count }' SraRunTable.txt`  
-**Step 10.** Select six samples to carry forward for further analysis: two near the youngest age, two near the mean or median age, and two near the oldest age. For each pair, select one male and one female. This CSV file contains commas within double quotes. Selectively replacing them with semi-colons will prevent terminal commands like `awk` from misunderstanding the column structure. To view just the SRR numbers, the age, and the gender, use this code:
+**Step 10.** Select six samples to carry forward for further analysis: two near the youngest age, two near the average age, and two near the oldest age. For each pair, select one male and one female.  
+This CSV file contains commas within double quotes. Selectively replacing them with semi-colons will prevent terminal commands like `awk` from misunderstanding the column structure. To view just the SRR numbers, the age, and the gender, use this code:
 ```
 awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ";", $i) } 1' SraRunTable.txt | tail -n +2 | awk -F ',' '{print $1,$2,$15}' | sort -k2
 ```
