@@ -28,14 +28,14 @@ git clone https://github.com/SystemsGenetics/GEMmaker.git --branch develop
 ```
 **Step 2.** Create a folder named "input".  
 **Step 3.** Move SRA_IDS.txt from /demo to /input and add the six SRR numbers to it.  
-**Step 4.** Create a folder named "input/references", then navigate to that folder.  
+**Step 4.** Create a folder within "input" named "references", then navigate to that folder.  
 **Step 5** Index the human genome using **Singularity** and **hisat2** (Alternatively, you can move the references file over from a previous deployment of GEMmaker).  
 1. Download `wget http://ftp.ensembl.org/pub/release-103/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz`
 2. Download `wget http://ftp.ensembl.org/pub/release-103/gtf/homo_sapiens/Homo_sapiens.GRCh38.103.gtf.gz`
 3. Decompress `gunzip *.gz`
 4. Run the command `singularity exec -B ${PWD} docker://gemmaker/hisat2:2.1.0-1.1 hisat2-build Homo_sapiens.GRCh38.dna.primary_assembly.fa HG38`  
 
-**Step 5.** Edit the nextflow.config file that is in the main GEMmaker to configure the GEMmaker run properly. This is the configuration file that has all the parameters for GEMmaker to run, so we need to replace all the example file names with our real data file names. Here are the steps to reconfigure the nextflow.config file:  
+**Step 5.** Edit the nextflow.config file located in the GEMmaker folder:  
 
 In the section titled "params":  
 1. Change `remote_sample_list = "./demo/SRA_IDs.txt"` to `remote_sample_list = "./input/SRA_IDs.txt"`
@@ -50,7 +50,7 @@ In the section titled "quantification":
 
 Save your changes.
  
-**Step 6.** Navigate to your GEMmaker working directory. Run GEMmaker with the human indexed genome, new RNAseq experiment list, and reconfigured nextflow.config file.
+**Step 6.** Navigate to your GEMmaker working directory. Run GEMmaker using this command:
 ```
 nextflow run main.nf -profile standard -with-singularity -with-report -with-timeline
 ```
