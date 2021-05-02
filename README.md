@@ -27,8 +27,12 @@ A bioinformatic workflow for finding differentially expressed genes between old 
 git clone https://github.com/SystemsGenetics/GEMmaker.git --branch develop
 ```
 **Step 2.** Index the human genome (or move the references file over from a previous deployment of GEMmaker).  
-**Step 3.** Update SRA_IDS.txt  
-**Step 4.** Edit the nextflow.config file that is in the main GEMmaker to configure the GEMmaker run properly. This is the configuration file that has all the parameters for GEMmaker to run, so we need to replace all the example file names with our real data file names. Here are the steps to reconfigure the nextflow.config file:
+1. Download `wget http://ftp.ensembl.org/pub/release-103/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz`
+2. Decompress `gunzip *.gz`
+3. Run the command `singularity exec -B ${PWD} docker://gemmaker/hisat2:2.1.0-1.1 hisat2-build Homo_sapiens.GRCh38.dna.primary_assembly.fa HG38`
+**Step 3.** Create a folder named "input".  
+**Step 4.** Move SRA_IDS.txt from /demo to /input and add the six SRR numbers to it.  
+**Step 5.** Edit the nextflow.config file that is in the main GEMmaker to configure the GEMmaker run properly. This is the configuration file that has all the parameters for GEMmaker to run, so we need to replace all the example file names with our real data file names. Here are the steps to reconfigure the nextflow.config file:
 1. Scroll down to the section that says project and change the name, machine_name, and description. You can edit these to whatever you want as the project name and project description, which are human-readable. Note that machine_name can only include letters, numbers, and underscores because it is the machine-readable project name.
 1. Scroll down to the section that says input. Change reference_name from “CORG” to “HG38”. This name must be the same as the prefix for all the index files in the references directory (the ones ending in .ht2).
 1. Change local_sample_files from “*_{1,2}.fastq” to “none”.  We are only using the samples with the SRA IDs from above – we don’t have any local sample files which would have been detected using the above regular expression.
