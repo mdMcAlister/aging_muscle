@@ -18,8 +18,9 @@ A bioinformatic workflow for building a gene co-expression network (GCN) compari
 ![image](https://user-images.githubusercontent.com/71157380/116802825-31d15580-aae4-11eb-90a1-7e8a35f4bcc5.png)  
 **Step 8.** Upload "SraRunTable.txt" to your Linux system.  
 **Step 9.** Determine the average age using this command: `awk -F ',' '{ total += $2; count++ } END { print total/count }' SraRunTable.txt`  
-**Step 10.** Select six samples to carry forward for further analysis: two near the youngest age, two near the average age, and two near the oldest age. For each pair, select one male and one female.  
-This CSV file contains commas within double quotes. Selectively replacing them with semi-colons will prevent terminal commands like `awk` from misunderstanding the column structure. To view just the SRR numbers, the age, the experiment number, and the gender, use this code:
+**Step 10.** Select 12 samples to carry forward for further analysis: 4 near the youngest age, 4 near the average age, and 4 near the oldest age. For each group, select two male samples and two female samples.  
+To decide which samples you should use, either import the "SraRunTable.txt" file into a local spreadsheet program or view it on the terminal. If you want to view it on the terminal, you'll need to compensate for a problem: this CSV contains commas within double quotes. `awk` will interpret these commas as signifying a new column, which will disrupt the column structure. To fix this, you'll need to selectively replace commas within double quotes with something else (e.g. semi-colons).  
+Here's a one-liner that will do the trick. After replacing the double quoted commas with semi-colons, it will display just the SRR number, the age, the experiment number, and the gender for each sample:
 ```
 awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ";", $i) } 1' SraRunTable.txt | tail -n +2 | awk -F ',' '{print $1,$2,$14,$15}' | sort -k2
 ```
@@ -66,9 +67,9 @@ nextflow run main.nf -profile standard -with-singularity -with-report -with-time
 **Step 1.** Activate GEMprep using the command `conda activate gemprep`  
 **Step 2.** Log2 transform the GEM:  
 ```
-python ./GEMprep/bin/normalize.py  GEMmaker.GEM.TPM.ascending.txt  GEMmaker.GEM.TPM.ascending.log2.txt --log2
+python ./GEMprep/bin/normalize.py  GEMmaker.GEM.FPKM.txt  GEMmaker.GEM.FPKM.log2.txt --log2
 ```
 **Step 3.** Quantile normalize the GEM:
 ```
-python ./GEMprep/bin/normalize.py  GEMmaker.GEM.TPM.ascending.log2.txt  GEMmaker.GEM.TPM.ascending.log2.quantile.txt --quantile
+python ./GEMprep/bin/normalize.py  GEMmaker.GEM.FPKM.log2.txt  GEMmaker.GEM.FPKM.log2.quantile.txt --quantile
 ```
