@@ -1,5 +1,5 @@
 # aging_muscle
-A bioinformatic workflow for finding differentially expressed genes between old and young tissue samples.
+A bioinformatic workflow for building a gene co-expression network (GCN) comparing old and young tissue samples.
 
 ## Prerequisites
 * [Nextflow](https://github.com/nextflow-io/nextflow)
@@ -19,9 +19,9 @@ A bioinformatic workflow for finding differentially expressed genes between old 
 **Step 8.** Upload "SraRunTable.txt" to your Linux system.  
 **Step 9.** Determine the average age using this command: `awk -F ',' '{ total += $2; count++ } END { print total/count }' SraRunTable.txt`  
 **Step 10.** Select six samples to carry forward for further analysis: two near the youngest age, two near the average age, and two near the oldest age. For each pair, select one male and one female.  
-This CSV file contains commas within double quotes. Selectively replacing them with semi-colons will prevent terminal commands like `awk` from misunderstanding the column structure. To view just the SRR numbers, the age, and the gender, use this code:
+This CSV file contains commas within double quotes. Selectively replacing them with semi-colons will prevent terminal commands like `awk` from misunderstanding the column structure. To view just the SRR numbers, the age, the experiment number, and the gender, use this code:
 ```
-awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ";", $i) } 1' SraRunTable.txt | tail -n +2 | awk -F ',' '{print $1,$2,$15}' | sort -k2
+awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ";", $i) } 1' SraRunTable.txt | tail -n +2 | awk -F ',' '{print $1,$2,$14,$15}' | sort -k2
 ```
 **Step 11.** Copy the SRR numbers for these six samples into a temporary text file.  
 
@@ -61,3 +61,14 @@ Save your changes.
 nextflow run main.nf -profile standard -with-singularity -with-report -with-timeline
 ```
 **Time Estimate:** 12 - 24 Hours
+
+## Preprocess the GEM
+**Step 1.** Activate GEMprep using the command `conda activate gemprep`  
+**Step 2.** Log2 transform the GEM:  
+```
+python ./GEMprep/bin/normalize.py  GEMmaker.GEM.TPM.ascending.txt  GEMmaker.GEM.TPM.ascending.log2.txt --log2
+```
+**Step 3.** Quantile normalize the GEM:
+```
+python ./GEMprep/bin/normalize.py  GEMmaker.GEM.TPM.ascending.log2.txt  GEMmaker.GEM.TPM.ascending.log2.quantile.txt --quantile
+```
