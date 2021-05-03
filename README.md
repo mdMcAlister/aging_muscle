@@ -18,13 +18,15 @@ A bioinformatic workflow for building a gene co-expression network (GCN) compari
 ![image](https://user-images.githubusercontent.com/71157380/116802825-31d15580-aae4-11eb-90a1-7e8a35f4bcc5.png)  
 **Step 8.** Upload "SraRunTable.txt" to your Linux system.  
 **Step 9.** Determine the average age using this command: `awk -F ',' '{ total += $2; count++ } END { print total/count }' SraRunTable.txt`  
-**Step 10.** Select 12 samples to carry forward for further analysis: 4 near the youngest age, 4 near the average age, and 4 near the oldest age. For each group, select two male samples and two female samples.  
+**Step 10.** Select **12** samples to carry forward for further analysis: 4 near the youngest age, 4 near the average age, and 4 near the oldest age. For each group, select two male samples and two female samples.  
+
 To decide which samples you should use, either import the "SraRunTable.txt" file into a local spreadsheet program or view it on the terminal. If you want to view it on the terminal, you'll need to compensate for a problem: this CSV contains commas within double quotes. `awk` will interpret these commas as signifying a new column, which will disrupt the column structure. To fix this, you'll need to selectively replace commas within double quotes with something else (e.g. semi-colons).  
+
 Here's a one-liner that will do the trick. After replacing the double quoted commas with semi-colons, it will display just the SRR number, the age, the experiment number, and the gender for each sample:
 ```
 awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", ";", $i) } 1' SraRunTable.txt | tail -n +2 | awk -F ',' '{print $1,$2,$14,$15}' | sort -k2
 ```
-**Step 11.** Copy the SRR numbers for these six samples into a temporary text file.  
+**Step 11.** Copy the SRR numbers for these 12 samples into a temporary text file.  
 
 ## Configure GEMmaker and Create a Gene Expression Matrix (GEM)
 **Step 1.** Clone GEMmaker inside your working directory.  
